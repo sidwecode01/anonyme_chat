@@ -1,61 +1,95 @@
-"use server";
+import { NextResponse } from "next/server";
+import dbConnect from "../../../lib/dbConnect";
+import mongoose from "mongoose";
+import posts from "../../../model/posts";
+// import posts from "../../../model/posts";
 
-import { ObjectId } from "mongodb";
-import dbConnect from "../../lib/dbConnect";
 
-export async function updatePost(id, formData) {
-  const image_path = formData.get("image_path");
-  const title = formData.get("title");
-  const content = formData.get("content");
-
-  if (!title || !content) {
-    throw new Error("Le titre et le contenu ne peuvent pas être vides pour la mise à jour.");
-  }
-
-  if (!ObjectId.isValid(id)) {
-    throw new Error("L'identifiant fourni est invalide.");
-  }
-
+export async function PUT(req, { params }) {
   try {
-    const db = await dbConnect;
-    const postObjectId = new ObjectId(id);
+    const { id } = await params;
 
-    const result = await db.collection("posts").updateOne(
-      { _id: postObjectId },
-      { $set: { image_path, title, content, updatedAt: new Date() } }
-    );
-
-    if (result.matchedCount === 0) {
-      throw new Error("Aucune publication trouvée avec cet ID. La mise à jour a échoué.");
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "ID invalide" }, { status: 400 });
     }
 
-    return { success: true, message: `Publication ID ${id} mise à jour.`, modifiedCount: result.modifiedCount };
+    const data = await req.json();
+    const { image_path, title, content } = data;
 
+    if (!title?.trim() || !content?.trim()) {
+      return NextResponse.json(
+        { error: "Le titre et le contenu ne peuvent pas être vides." },
+        { status: 400 }
+      );
+    }
+
+    await dbConnect();
+
+    const updateData = {
+      title: title.trim(),
+      content: content.trim(),
+      updatedAt: new Date(),
+    };
+
+    if (image_path) {
+      updateData.image_path = image_path;
+    }
+
+    const updated = await posts.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      return NextResponse.json(
+        { error: "Aucune publication trouvée avec cet ID." },
+        { status: 404 }
+      );
+    }
+
+    console.log(`Publication mise à jour avec succès - ID: ${id}`);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Publication mise à jour avec succès",
+        data: updated,
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error(`Erreur serveur lors de la mise à jour de la publication ${id}:`, error);
-    throw new Error(error.message || "Échec de la mise à jour de la publication en base de données.");
+    console.error("Erreur lors de la mise à jour de la publication:", {
+      error: error.message,
+      stack: error.stack,
+    });
+
+    return NextResponse.json(
+      {
+        error: "Erreur lors de la mise à jour de la publication",
+        ...(process.env.NODE_ENV === "development" && {
+          detail: error.message,
+        }),
+      },
+      { status: 500 }
+    );
   }
 }
 
-export async function deletePost(id) {
-  if (!ObjectId.isValid(id)) {
-    throw new Error("L'identifiant fourni est invalide.");
-  }
-
+export async function DELETE(req, { params }) {
   try {
-    const db = await dbConnect;
-    const postObjectId = new ObjectId(id);
-
-    const result = await db.collection("posts").deleteOne({ _id: postObjectId });
-
-    if (result.deletedCount === 0) {
-      throw new Error("Aucune publication trouvée avec cet ID. La suppression a échoué.");
+    const { id } = await params;
+    
+    await dbConnect();
+    const deleted = await posts.findByIdAndDelete(id);
+    
+    if (!deleted) {
+      return NextResponse.json({ error: "Publication non trouvée" }, { status: 404 });
     }
-
-    return { success: true, message: `Publication ID ${id} supprimée avec succès.` };
-
+    
+    return NextResponse.json({ success: true, message: "Publication supprimée" });
   } catch (error) {
-    console.error(`Erreur serveur lors de la suppression de la publication ${id}:`, error);
-    throw new Error(error.message || "Échec de la suppression de la publication en base de données.");
+    console.error("Erreur suppression:", error);
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

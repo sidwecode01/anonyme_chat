@@ -7,6 +7,7 @@ import { Sparkles } from "lucide-react";
 import PostCard from "./components/PostCard";
 import CreatePost from "./components/CreatePost";
 import Navigation from "./components/Navigation";
+import Particles from "./components/Particles"; // ✅ import du composant corrigé
 
 interface Post {
   id: number;
@@ -22,67 +23,35 @@ interface Post {
   color: string;
 }
 
-const initialPosts: Post[] = [
-  {
-    id: 1,
-    content:
-      "Qui d'autre pense que les pauses café de Wecode sont les meilleures moments de la journée ? ☕️✨",
-    timestamp: "Il y a 5 min",
-    reactions: { heart: 24, fire: 12, laugh: 8, thumbs: 15 },
-    comments: 5,
-    color: "purple",
-  },
-  {
-    id: 2,
-    content:
-      "Debug pendant 2h pour réaliser que j'avais oublié un point-virgule... La vie de dev 😅",
-    timestamp: "Il y a 15 min",
-    reactions: { heart: 45, fire: 23, laugh: 67, thumbs: 34 },
-    comments: 12,
-    color: "blue",
-  },
-  {
-    id: 3,
-    content:
-      "Ce moment où ton code fonctionne du premier coup et tu ne sais pas pourquoi... suspect 🤔",
-    timestamp: "Il y a 1h",
-    reactions: { heart: 18, fire: 34, laugh: 42, thumbs: 28 },
-    comments: 8,
-    color: "yellow",
-  },
-  {
-    id: 4,
-    content: "Merci à tous les profs de Wecode ! Vous êtes incroyables 🙏💜",
-    timestamp: "Il y a 2h",
-    reactions: { heart: 89, fire: 45, laugh: 12, thumbs: 67 },
-    comments: 23,
-    color: "green",
-  },
-  {
-    id: 5,
-    content:
-      "Quelqu'un veut former un groupe d'étude pour le prochain projet ? 📚🚀",
-    timestamp: "Il y a 3h",
-    reactions: { heart: 32, fire: 18, laugh: 5, thumbs: 41 },
-    comments: 15,
-    color: "pink",
-  },
-];
-
 const colors = ["purple", "blue", "yellow", "green", "pink"] as const;
 
 export default function Home() {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [currentView, setCurrentView] = useState<"feed" | "create">("feed");
   const [darkMode, setDarkMode] = useState(false);
 
-  // Gestion du mode sombre via class Tailwind
+  // 🔹 Charger les posts depuis ton API
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch("/api/posts");
+        const data: Post[] = await res.json();
+        setPosts(data);
+      } catch (error) {
+        console.error("Erreur lors du chargement des posts :", error);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  // 🔹 Gestion du mode sombre
   useEffect(() => {
     const root = document.documentElement;
     if (darkMode) root.classList.add("dark");
     else root.classList.remove("dark");
   }, [darkMode]);
 
+  // 🔹 Création d’un nouveau post
   const handleNewPost = (content: string) => {
     const newPost: Post = {
       id: Date.now(),
@@ -92,7 +61,16 @@ export default function Home() {
       comments: 0,
       color: colors[Math.floor(Math.random() * colors.length)],
     };
+
     setPosts((prev) => [newPost, ...prev]);
+
+    // Optionnel : envoie aussi vers ton API
+    fetch("/api/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newPost),
+    }).catch((err) => console.error("Erreur lors de l'ajout du post :", err));
+
     setCurrentView("feed");
   };
 
@@ -170,14 +148,14 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <PostCard {...post} />
+                    {/* <PostCard {...post} /> */}
                   </motion.div>
                 ))}
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Empty state for feed */}
+          {/* Empty state */}
           {currentView === "feed" && posts.length === 0 && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -202,35 +180,8 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Floating particles decoration */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 rounded-full opacity-20"
-            style={{
-              background:
-                i % 3 === 0
-                  ? "linear-gradient(135deg, #a855f7, #ec4899)"
-                  : i % 3 === 1
-                  ? "linear-gradient(135deg, #06b6d4, #22c55e)"
-                  : "linear-gradient(135deg, #facc15, #f97316)",
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              x: [0, Math.random() * 20 - 10, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </div>
+      {/* ✅ Particles corrigés */}
+      <Particles />
     </div>
   );
 }

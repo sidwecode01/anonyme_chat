@@ -5,7 +5,7 @@ import { Heart, MessageCircle, Smile, ThumbsUp, Zap } from "lucide-react";
 import { useState } from "react";
 
 interface PostCardProps {
-  id: number;
+  _id: number;
   content: string;
   timestamp: string;
   reactions: {
@@ -26,13 +26,14 @@ const colorVariants: Record<string, string> = {
   pink: "from-pink-500 to-rose-400",
 };
 
+// const emojis = ["❤️","😂"];
 const emojis = ["❤️", "🔥", "😂", "👍"];
 
 export default function PostCard({
   content,
   timestamp,
   reactions,
-  comments,
+  // comments,
   color,
 }: PostCardProps) {
   const [localReactions, setLocalReactions] = useState(reactions);
@@ -63,7 +64,7 @@ export default function PostCard({
     >
       {/* Gradient accent */}
       <div
-        className={`absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${colorVariants[color]}`}
+        className={`absolute top-0 left-0 w-2 h-full bg-linear-to-br ${colorVariants[color]}`}
       />
 
       {/* Emoji burst animation */}
@@ -90,7 +91,7 @@ export default function PostCard({
 
       {/* Anonymous badge */}
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center">
           <span className="text-xl">🎭</span>
         </div>
         <div>
@@ -110,7 +111,7 @@ export default function PostCard({
           onClick={() => handleReaction("heart", "❤️")}
           className={`flex items-center gap-1 px-3 py-2 rounded-full transition-all ${
             selectedReaction === "heart"
-              ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white"
+              ? "bg-linear-to-br from-pink-500 to-rose-500 text-white"
               : "bg-muted hover:bg-muted/80"
           }`}
         >
@@ -118,7 +119,7 @@ export default function PostCard({
             className="w-4 h-4"
             fill={selectedReaction === "heart" ? "currentColor" : "none"}
           />
-          <span className="text-sm">{localReactions.heart}</span>
+          <span className="text-sm">{localReactions?.heart ?? 0}</span>
         </motion.button>
 
         <motion.button
@@ -127,7 +128,7 @@ export default function PostCard({
           onClick={() => handleReaction("fire", "🔥")}
           className={`flex items-center gap-1 px-3 py-2 rounded-full transition-all ${
             selectedReaction === "fire"
-              ? "bg-gradient-to-r from-orange-500 to-red-500 text-white"
+              ? "bg-linear-to-br from-orange-500 to-red-500 text-white"
               : "bg-muted hover:bg-muted/80"
           }`}
         >
@@ -135,7 +136,7 @@ export default function PostCard({
             className="w-4 h-4"
             fill={selectedReaction === "fire" ? "currentColor" : "none"}
           />
-          <span className="text-sm">{localReactions.fire}</span>
+          <span className="text-sm">{localReactions?.fire ?? 0}</span>
         </motion.button>
 
         <motion.button
@@ -144,7 +145,7 @@ export default function PostCard({
           onClick={() => handleReaction("laugh", "😂")}
           className={`flex items-center gap-1 px-3 py-2 rounded-full transition-all ${
             selectedReaction === "laugh"
-              ? "bg-gradient-to-r from-yellow-400 to-orange-400 text-white"
+              ? "bg-linear-to-br from-yellow-400 to-orange-400 text-white"
               : "bg-muted hover:bg-muted/80"
           }`}
         >
@@ -152,7 +153,7 @@ export default function PostCard({
             className="w-4 h-4"
             fill={selectedReaction === "laugh" ? "currentColor" : "none"}
           />
-          <span className="text-sm">{localReactions.laugh}</span>
+          <span className="text-sm">{localReactions?.laugh ?? 0}</span>
         </motion.button>
 
         <motion.button
@@ -161,7 +162,7 @@ export default function PostCard({
           onClick={() => handleReaction("thumbs", "👍")}
           className={`flex items-center gap-1 px-3 py-2 rounded-full transition-all ${
             selectedReaction === "thumbs"
-              ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white"
+              ? "bg-linear-to-br from-blue-500 to-cyan-400 text-white"
               : "bg-muted hover:bg-muted/80"
           }`}
         >
@@ -169,12 +170,12 @@ export default function PostCard({
             className="w-4 h-4"
             fill={selectedReaction === "thumbs" ? "currentColor" : "none"}
           />
-          <span className="text-sm">{localReactions.thumbs}</span>
+          <span className="text-sm">{localReactions?.thumbs ?? 0}</span>
         </motion.button>
 
         <div className="flex items-center gap-1 px-3 py-2 rounded-full bg-muted text-muted-foreground">
-          <MessageCircle className="w-4 h-4" />
-          <span className="text-sm">{comments}</span>
+          <MessageCircle className="w-8 h-8 hover:-translate-y-2 hover:shadow-xl transition-all duration-300 ease-out" />
+          {/* <span className="text-sm text-amber-300">{comments}</span> */}
         </div>
       </div>
     </motion.div>

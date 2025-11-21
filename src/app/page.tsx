@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-export default function Home() {
-  return (
-    <div>
-      <h1>Anonyme chat</h1>
-=======
 "use client";
 
 import { useState, useEffect } from "react";
@@ -80,6 +74,9 @@ export default function Home() {
     setCurrentView("feed");
   };
 
+  console.log("Mes postes:", posts);
+
+
   const toggleDarkMode = () => setDarkMode((v) => !v);
 
   return (
@@ -154,7 +151,15 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    {/* <PostCard {...post} /> */}
+                    <PostCard {
+                      ...post}
+                      reactions={{
+                        heart: post.reactions?.heart ?? 0,
+                        fire: post.reactions?.fire ?? 0,
+                        laugh: post.reactions?.laugh ?? 0,
+                        thumbs: post.reactions?.thumbs ?? 0,
+                      }}
+                    />
                   </motion.div>
                 ))}
               </motion.div>
@@ -188,7 +193,6 @@ export default function Home() {
 
       {/* ✅ Particles corrigés */}
       <Particles />
->>>>>>> stagging
     </div>
   );
 }

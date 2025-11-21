@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 
-dotenv.config(); // Charge .env.local
+// dotenv.config(); // Charge .env.local
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = "mongodb+srv://Slase-Sidyellow-anonymous:SlaseSidyellowAnonymous@cluster0.dvlvvbg.mongodb.net/anonymous_chatapp?Name=Cluster0"
+// const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  console.error("❌ La variable MONGODB_URI n'est pas définie !");
+  console.error(":( La variable MONGODB_URI n'est pas définie !");
   process.exit(1);
 }
 

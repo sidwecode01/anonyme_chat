@@ -71,7 +71,7 @@ export async function GET(req, context) {
       .find({ post: id })
       .sort({ createdAt: -1 });
 
-    return NextResponse.json({ commentaires }, { status: 200 });
+    return NextResponse.json(commentaires , { status: 200 });
   } catch (err) {
     return NextResponse.json(
       {

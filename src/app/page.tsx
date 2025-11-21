@@ -80,7 +80,7 @@ export default function Home() {
   const toggleDarkMode = () => setDarkMode((v) => !v);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <div className="min-h-screen bg-linear-to-br from-background via-background to-muted">
       <Navigation
         currentView={currentView}
         setCurrentView={setCurrentView}
@@ -104,7 +104,7 @@ export default function Home() {
               >
                 <Sparkles className="w-8 h-8 text-primary" />
               </motion.div>
-              <h1 className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+              <h1 className="bg-linear-to-r from-purple-500 via-pink-500 to-orange-400 bg-clip-text text-transparent">
                 Wecode Confessions
               </h1>
               <motion.div
@@ -182,7 +182,7 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setCurrentView("create")}
-                className="px-6 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                className="px-6 py-3 rounded-full bg-linear-to-r from-purple-500 to-pink-500 text-white"
               >
                 Créer un post 🎉
               </motion.button>

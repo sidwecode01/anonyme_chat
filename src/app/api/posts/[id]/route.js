@@ -5,6 +5,33 @@ import posts from "../../../model/posts";
 // import posts from "../../../model/posts";
 
 
+export async function GET(req, { params }) {
+  try {
+    const { id } = await params;
+    console.log("ID du poste:", id);
+    
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "ID invalide" }, { status: 400 });
+    }
+
+    await dbConnect();
+    const onePost = await posts.findById(id);
+    if (!onePost) {
+      return new Response(JSON.stringify({ erreur: "Pubilcation non trouvée." }), { status: 400 });
+    }
+    return new Response(JSON.stringify(onePost), { status: 200 });
+  } catch (error) {
+    console.error("Erreur lors de la récupération du post :", error);
+    return new Response(
+      JSON.stringify({ erreur: "Impossible de récupérer la publication.", details: error.message }),
+      { status: 500 }
+    );
+  }
+};
+
+
+
 export async function PUT(req, { params }) {
   try {
     const { id } = await params;
@@ -79,14 +106,14 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     const { id } = await params;
-    
+
     await dbConnect();
     const deleted = await posts.findByIdAndDelete(id);
-    
+
     if (!deleted) {
       return NextResponse.json({ error: "Publication non trouvée" }, { status: 404 });
     }
-    
+
     return NextResponse.json({ success: true, message: "Publication supprimée" });
   } catch (error) {
     console.error("Erreur suppression:", error);

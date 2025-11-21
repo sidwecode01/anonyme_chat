@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
-// Assure-toi que ces imports pointent vers les bons chemins dans ton projet
 import PostCard from "./components/PostCard";
 import CreatePost from "./components/CreatePost";
 import Navigation from "./components/Navigation";

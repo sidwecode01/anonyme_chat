@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 
-dotenv.config();
+// dotenv.config();
 
 // const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_URI="mongodb+srv://Slase-Sidyellow-anonymous:SlaseSidyellowAnonymous@cluster0.dvlvvbg.mongodb.net/anonymous_chatapp?Name=Cluster0"

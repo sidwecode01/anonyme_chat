@@ -17,7 +17,17 @@ export const GET = async () => {
   }
 };
 
-export async function POST(request) {
+export default async function POST(request) {
+  const data = await request.json();
+  // const image_path = formData.get("image_path");
+  // const title = formData.get("title");
+  // const content = formData.get("content");
+
+  if (!data.title || !data.content) {
+    throw new Error("Le titre et le contenu ne peuvent pas être vides.");
+  }
+
+  await dbConnect();
   try {
     const data = await request.json();
 
